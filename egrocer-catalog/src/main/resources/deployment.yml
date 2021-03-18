@@ -1,0 +1,58 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: egrocer-catalog
+  labels:
+    name: egrocer-catalog
+spec:
+  ports:
+    - nodePort: 30164 
+      port: 8081      
+      targetPort: 8081  
+      protocol: TCP
+  selector:           
+    app: egrocer-catalog
+  type: NodePort       
+
+---
+apiVersion: apps/v1 
+kind: Deployment    
+metadata:              
+  name: egrocer-catalog
+spec:                
+  selector:         
+    matchLabels:
+      app: egrocer-catalog
+  replicas: 3        
+  template:
+    metadata:
+      labels:        
+        app: egrocer-catalog
+    spec:
+      containers:
+        - name: egrocer-catalog
+          image: linjudock19/egrocer-catalog
+          ports:
+            - containerPort: 8081                
+          env:   # Setting Enviornmental Variables
+          - name: DB_HOST   # Setting Database host address from configMap
+            valueFrom: 
+              configMapKeyRef:
+                name: db-conf  # name of configMap
+                key: host
+          - name: DB_NAME  # Setting Database name from configMap
+            valueFrom:
+              configMapKeyRef:
+                name: db-conf 
+                key: name
+          - name: DB_USERNAME  # Setting Database username from Secret
+            valueFrom:
+              secretKeyRef:
+                name: db-credentials # Secret Name
+                key: username
+          - name: DB_PASSWORD # Setting Database password from Secret
+            valueFrom:
+              secretKeyRef:
+                name: db-credentials
+                key: password     
+        
