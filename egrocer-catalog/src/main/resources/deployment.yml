@@ -5,14 +5,14 @@ metadata:
   labels:
     name: egrocer-catalog
 spec:
+  type: LoadBalancer
   ports:
-    - nodePort: 30164 
-      port: 8081      
-      targetPort: 8081  
+    - nodePort: 30164
+      port: 8081
+      targetPort: 8081
       protocol: TCP
   selector:           
-    app: egrocer-catalog
-  type: NodePort       
+    app: egrocer-catalog      
 
 ---
 apiVersion: apps/v1 
